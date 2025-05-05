@@ -1,0 +1,106 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+routes:
+  - uris: 
+      - /basic
+      - /basic/chat/completions
+    upstream:
+      type: roundrobin
+      scheme: https
+      pass_host: node
+      nodes:
+        "ignored:80": 1
+    plugins:
+      ai-proxy:
+        provider: openai
+        auth:
+          header:
+            Authorization: Bearer ${{OPENAI_API_KEY}}
+        options:
+          model: gpt-4o
+  - uris: 
+      - /secure
+      - /secure/chat/completions
+    upstream:
+      type: roundrobin
+      scheme: https
+      pass_host: node
+      nodes:
+        "ignored:80": 1
+    plugins:
+      key-auth:
+      ai-proxy:
+        provider: openai
+        auth:
+          header:
+            Authorization: "Bearer ${{OPENAI_API_KEY}}"
+        options:
+          model: gpt-4o
+  - uris: 
+      - /countrt
+      - /countrt/chat/completions
+    upstream:
+      type: roundrobin
+      scheme: https
+      pass_host: node
+      nodes:
+        "ignored:80": 1
+    plugins:
+      key-auth:
+      limit-count:
+        count: 2
+        time_window: 60
+        rejected_code: 503
+        key_type: var
+        key: remote_addr
+      ai-proxy:
+        provider: openai
+        auth:
+          header:
+            Authorization: "Bearer ${{OPENAI_API_KEY}}"
+        options:
+          model: gpt-4o
+  - uris: 
+      - /tokenrt
+      - /tokenrt/chat/completions
+    upstream:
+      type: roundrobin
+      scheme: https
+      pass_host: node
+      nodes:
+        "ignored:80": 1
+    plugins:
+      key-auth:
+      ai-rate-limiting:
+        limit: 500
+        time_window: 60
+        limit_strategy: prompt_tokens
+      ai-proxy:
+        provider: openai
+        auth:
+          header:
+            Authorization: "Bearer ${{OPENAI_API_KEY}}"
+        options:
+          model: gpt-4o
+
+consumers:
+  - username: consumer1
+    plugins:
+      key-auth:
+        key: "auth-one"
+#END
