@@ -16,6 +16,7 @@
 #
 
 routes:
+  # Just OpenAI integration
   - uris: 
       - /basic
       - /basic/chat/completions
@@ -33,6 +34,7 @@ routes:
             Authorization: Bearer ${{OPENAI_API_KEY}}
         options:
           model: gpt-4o
+  # Add key auth
   - uris: 
       - /secure
       - /secure/chat/completions
@@ -51,6 +53,7 @@ routes:
             Authorization: "Bearer ${{OPENAI_API_KEY}}"
         options:
           model: gpt-4o
+  # Add count rate limiting
   - uris: 
       - /countrt
       - /countrt/chat/completions
@@ -75,6 +78,7 @@ routes:
             Authorization: "Bearer ${{OPENAI_API_KEY}}"
         options:
           model: gpt-4o
+  # Replace with token count rate limiting
   - uris: 
       - /tokenrt
       - /tokenrt/chat/completions
