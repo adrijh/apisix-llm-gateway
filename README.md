@@ -24,14 +24,16 @@ LLMs in production require much more than just a simple API call. A Gateway enab
 ## 🛠️ Setup Instructions
 
 1. **Clone the repository**
-   ```bash
-   git clone https://github.com/adrijh/apisix-llm-gateway.git
-   cd apisix-llm-gateway```
+```bash
+git clone https://github.com/adrijh/apisix-llm-gateway.git
+cd apisix-llm-gateway
+```
 
 2. **Introduce your API Key** in .env file
 
 3. **Deploy gateway**
-   ```bash
-   docker compose up -d```
+```bash
+docker compose up -d
+```
 
 You can test routes and functionalities using the `scripts/` folder
